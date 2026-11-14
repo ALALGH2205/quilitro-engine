@@ -204,6 +204,10 @@ jobs:
           name: ${{ matrix.job.arch == 'aarch64' && 'bridge-artifact-flutter-3.44' || 'bridge-artifact' }}
           path: ./
 
+      - name: Rebrand to QUILITRO
+        shell: bash
+        run: bash .github/scripts/quilitro-rebrand.sh
+
       - name: Install LLVM and Clang
         uses: KyleMayes/install-llvm-action@ebc0426251bc40c7cd31162802432c68818ab8f0 # v2.0.9
         with:
@@ -1511,6 +1515,10 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           submodules: recursive
+
+      - name: Rebrand to QUILITRO
+        shell: bash
+        run: bash .github/scripts/quilitro-rebrand.sh
 
       - name: Check JNI natives are in ffi.FFI
         # Custom clients rename com.carriez.flutter_hbb; only ffi.FFI keeps its name.
