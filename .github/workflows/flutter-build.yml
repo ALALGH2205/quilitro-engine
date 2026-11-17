@@ -472,9 +472,12 @@ jobs:
         if: env.UPLOAD_ARTIFACT == 'true'
         run: |
           sed -i '/dpiAware/d' res/manifest.xml
+          # QUILITRO: salin hasil build lalu ganti nama exe supaya cocok dengan APP_NAME
+          cp -r ./rustdesk ./quilitro-dist
+          mv ./quilitro-dist/rustdesk.exe ./quilitro-dist/QUILITRO.exe
           pushd ./libs/portable
           pip3 install -r requirements.txt
-          python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/rustdesk.exe
+          python3 ./generate.py -f ../../quilitro-dist/ -o . -e ../../quilitro-dist/QUILITRO.exe
           popd
           mkdir -p ./SignOutput
           mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.exe
