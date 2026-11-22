@@ -1,4 +1,5 @@
-// QUILITRO UI kit: latar gradasi bergerak, kartu kaca, tombol emas, tombol tema.
+// QUILITRO UI kit: latar gradasi bergerak, kartu kaca, tombol emas, tema gelap/terang.
+// Meniru tampilan aplikasi QUILITRO versi mobile.
 import 'dart:math' as math;
 import 'dart:ui' show ImageFilter;
 
@@ -6,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hbb/common.dart';
 
 class QColors {
-  static const gold = Color(0xFFF5C451);
-  static const goldDeep = Color(0xFFD9961A);
-  static const onGold = Color(0xFF2B1A00);
+  static const gold = Color(0xFFF5B83D);
+  static const goldDeep = Color(0xFFE0951A);
+  static const onGold = Color(0xFF1E1300);
+  static const lavender = Color(0xFFB4C0FF);
+  static const indigo = Color(0xFF3F4FBF);
 }
 
 bool qIsDark(BuildContext context) =>
@@ -20,7 +23,7 @@ Color qText(BuildContext context) =>
 Color qSubText(BuildContext context) =>
     qIsDark(context) ? Colors.white70 : const Color(0xFF5A5470);
 
-/// Latar gradasi dengan 4 gumpalan warna yang bergerak dan berubah bentuk.
+/// Latar navy gelap dengan gumpalan cahaya yang bergerak pelan.
 class QuilitroBackground extends StatefulWidget {
   final Widget child;
   const QuilitroBackground({Key? key, required this.child}) : super(key: key);
@@ -32,7 +35,7 @@ class QuilitroBackground extends StatefulWidget {
 class _QuilitroBackgroundState extends State<QuilitroBackground>
     with SingleTickerProviderStateMixin {
   late final AnimationController _c =
-      AnimationController(vsync: this, duration: const Duration(seconds: 30))
+      AnimationController(vsync: this, duration: const Duration(seconds: 32))
         ..repeat();
 
   @override
@@ -45,14 +48,14 @@ class _QuilitroBackgroundState extends State<QuilitroBackground>
   Widget build(BuildContext context) {
     final dark = qIsDark(context);
     final base = dark
-        ? const [Color(0xFF0B0A1A), Color(0xFF17122F)]
+        ? const [Color(0xFF030816), Color(0xFF0A1229)]
         : const [Color(0xFFF7F4FF), Color(0xFFFFF6E3)];
     final blobs = dark
         ? const [
-            Color(0xFF6D4AFF),
-            Color(0xFF2F7BFF),
-            Color(0xFFF5C451),
-            Color(0xFFB04CFF)
+            Color(0xFF7C4DFF),
+            Color(0xFF2F6BFF),
+            Color(0xFFC98A4B),
+            Color(0xFF9B51E0)
           ]
         : const [
             Color(0xFFB9A4FF),
@@ -66,8 +69,8 @@ class _QuilitroBackgroundState extends State<QuilitroBackground>
         DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
               colors: base,
             ),
           ),
@@ -76,7 +79,7 @@ class _QuilitroBackgroundState extends State<QuilitroBackground>
           child: AnimatedBuilder(
             animation: _c,
             builder: (context, _) => CustomPaint(
-              painter: _BlobPainter(_c.value, blobs, dark ? 0.50 : 0.60),
+              painter: _BlobPainter(_c.value, blobs, dark ? 0.45 : 0.60),
             ),
           ),
         ),
@@ -128,8 +131,8 @@ class GlassCard extends StatelessWidget {
   const GlassCard({
     Key? key,
     required this.child,
-    this.padding = const EdgeInsets.all(20),
-    this.radius = 22,
+    this.padding = const EdgeInsets.all(22),
+    this.radius = 32,
   }) : super(key: key);
 
   @override
@@ -139,17 +142,17 @@ class GlassCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: br,
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
           padding: padding,
           decoration: BoxDecoration(
             color: dark
-                ? Colors.white.withOpacity(0.07)
+                ? Colors.white.withOpacity(0.06)
                 : Colors.white.withOpacity(0.55),
             borderRadius: br,
             border: Border.all(
               color: dark
-                  ? Colors.white.withOpacity(0.14)
+                  ? Colors.white.withOpacity(0.13)
                   : Colors.white.withOpacity(0.85),
             ),
           ),
@@ -160,7 +163,7 @@ class GlassCard extends StatelessWidget {
   }
 }
 
-/// Tombol emas (isi) atau berbingkai emas (outlined).
+/// Tombol emas (isi) atau tombol berbingkai (outlined).
 class GoldButton extends StatelessWidget {
   final String text;
   final IconData? icon;
@@ -177,9 +180,9 @@ class GoldButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = qIsDark(context);
-    final br = BorderRadius.circular(14);
+    final br = BorderRadius.circular(30);
     final fg = outlined
-        ? (dark ? QColors.gold : QColors.goldDeep)
+        ? (dark ? QColors.lavender : QColors.indigo)
         : QColors.onGold;
     return Opacity(
       opacity: onPressed == null ? 0.5 : 1,
@@ -196,14 +199,15 @@ class GoldButton extends StatelessWidget {
                   ),
             borderRadius: br,
             border: outlined
-                ? Border.all(color: QColors.gold, width: 1.5)
+                ? Border.all(
+                    color: dark ? Colors.white24 : Colors.black26, width: 1.3)
                 : null,
             boxShadow: outlined
                 ? null
                 : [
                     BoxShadow(
-                      color: QColors.gold.withOpacity(0.35),
-                      blurRadius: 16,
+                      color: QColors.gold.withOpacity(0.30),
+                      blurRadius: 18,
                       offset: const Offset(0, 6),
                     )
                   ],
@@ -212,14 +216,14 @@ class GoldButton extends StatelessWidget {
             borderRadius: br,
             onTap: onPressed,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (icon != null) ...[
-                    Icon(icon, size: 20, color: fg),
-                    const SizedBox(width: 8),
+                    Icon(icon, size: 22, color: fg),
+                    const SizedBox(width: 10),
                   ],
                   Flexible(
                     child: Text(
@@ -228,7 +232,7 @@ class GoldButton extends StatelessWidget {
                       style: TextStyle(
                         color: fg,
                         fontWeight: FontWeight.w700,
-                        fontSize: 15,
+                        fontSize: 17,
                       ),
                     ),
                   ),
@@ -242,61 +246,131 @@ class GoldButton extends StatelessWidget {
   }
 }
 
-/// Judul kartu dengan ikon emas.
+/// Judul kartu (teks tebal; ikon opsional diabaikan agar sama seperti versi mobile).
 class QCardTitle extends StatelessWidget {
   final String text;
-  final IconData icon;
-  const QCardTitle(this.text, this.icon, {Key? key}) : super(key: key);
+  final IconData? icon;
+  const QCardTitle(this.text, [this.icon]);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        color: qText(context),
+      ),
+    );
+  }
+}
+
+/// Baris pengaturan: judul + keterangan + saklar.
+class QSwitchRow extends StatelessWidget {
+  final String title;
+  final String? subtitle;
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+  const QSwitchRow({
+    Key? key,
+    required this.title,
+    this.subtitle,
+    required this.value,
+    this.onChanged,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: QColors.gold, size: 22),
-        const SizedBox(width: 10),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: qText(context),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title,
+                  style: TextStyle(fontSize: 17, color: qText(context))),
+              if (subtitle != null) ...[
+                const SizedBox(height: 3),
+                Text(subtitle!,
+                    style: TextStyle(fontSize: 13, color: qSubText(context))),
+              ],
+            ],
           ),
+        ),
+        const SizedBox(width: 10),
+        Switch(
+          value: value,
+          onChanged: onChanged,
+          activeColor: QColors.onGold,
+          activeTrackColor: QColors.gold,
         ),
       ],
     );
   }
 }
 
-/// Tulisan QUILITRO bergradasi emas.
+/// Logo: pakai assets/quilitro_logo.png bila ada, kalau tidak huruf "Q" emas.
+class QuilitroLogo extends StatelessWidget {
+  final double size;
+  const QuilitroLogo({Key? key, this.size = 46}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(size * 0.24),
+      child: Image.asset(
+        'assets/quilitro_logo.png',
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Container(
+          width: size,
+          height: size,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [QColors.gold, QColors.goldDeep],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Text(
+            'Q',
+            style: TextStyle(
+              fontSize: size * 0.6,
+              fontWeight: FontWeight.w900,
+              color: QColors.onGold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Logo + tulisan QUILITRO emas berjarak huruf.
 class QuilitroWordmark extends StatelessWidget {
   const QuilitroWordmark({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        const QuilitroLogo(size: 46),
+        const SizedBox(width: 14),
         ShaderMask(
           shaderCallback: (r) => const LinearGradient(
-            colors: [QColors.gold, Color(0xFFFFE8A3), QColors.goldDeep],
+            colors: [QColors.gold, Color(0xFFFFD27A), QColors.goldDeep],
           ).createShader(r),
           child: const Text(
             'QUILITRO',
             style: TextStyle(
-              fontSize: 26,
+              fontSize: 30,
               fontWeight: FontWeight.w800,
-              letterSpacing: 5,
+              letterSpacing: 6,
               color: Colors.white,
             ),
-          ),
-        ),
-        Text(
-          'REMOTE DESKTOP',
-          style: TextStyle(
-            fontSize: 10,
-            letterSpacing: 4,
-            color: qSubText(context),
           ),
         ),
       ],
@@ -316,6 +390,7 @@ class ThemeToggleButton extends StatelessWidget {
       icon: Icon(
         dark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
         color: qText(context),
+        size: 26,
       ),
       onPressed: () =>
           MyTheme.changeDarkMode(dark ? ThemeMode.light : ThemeMode.dark),
@@ -326,20 +401,19 @@ class ThemeToggleButton extends StatelessWidget {
 InputDecoration qInputDecoration(BuildContext context, {String? hint}) {
   final dark = qIsDark(context);
   OutlineInputBorder b(Color c, double w) => OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(26),
         borderSide: BorderSide(color: c, width: w),
       );
-  final line = dark ? Colors.white24 : Colors.black12;
   return InputDecoration(
     hintText: hint,
-    hintStyle: TextStyle(color: qSubText(context), fontSize: 16),
+    hintStyle: TextStyle(color: qSubText(context), fontSize: 18),
     filled: true,
     fillColor: dark
-        ? Colors.black.withOpacity(0.25)
-        : Colors.white.withOpacity(0.7),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-    border: b(line, 1),
-    enabledBorder: b(line, 1),
-    focusedBorder: b(QColors.gold, 1.8),
+        ? Colors.white.withOpacity(0.08)
+        : Colors.white.withOpacity(0.75),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
+    border: b(Colors.transparent, 0),
+    enabledBorder: b(Colors.transparent, 0),
+    focusedBorder: b(QColors.gold, 1.6),
   );
 }
